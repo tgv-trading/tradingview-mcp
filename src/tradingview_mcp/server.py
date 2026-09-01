@@ -70,6 +70,10 @@ from tradingview_mcp.core.services.options_service import (
     get_options_chain,
     get_unusual_options_activity,
 )
+from tradingview_mcp.core.services.ibkr_service import (
+    build_spy_option_order_intent,
+    get_spy_option_chain,
+)
 from tradingview_mcp.core.services.futures_service import (
     get_futures_overview,
     get_futures_movers,
@@ -875,6 +879,62 @@ def stock_options_unusual_activity(
           strike_vs_spot_pct (moneyness)}
     """
     return get_unusual_options_activity(symbol, top_n, min_volume, expiries)
+
+
+@mcp.tool(annotations=ToolAnnotations(title="IBKR SPY Options Chain", readOnlyHint=True, destructiveHint=False, openWorldHint=True))
+def ibkr_spy_options_chain(
+    expiry: str,
+    account_mode: str = "paper",
+    strikes_each_side: int = 5,
+    market_data_type: str = "live",
+) -> dict:
+    """Read a bounded SPY options chain from an IBKR Paper or Live data lane.
+
+    The adapter opens a market-data-only socket and verifies the exact configured
+    account identity. ``account_mode`` selects the isolated Paper or Live gateway
+    lane; ``market_data_type`` independently selects subscribed real-time data or
+    delayed data. This tool cannot place, modify, or cancel orders.
+
+    Args:
+        expiry: Exact expiration date in YYYY-MM-DD format.
+        account_mode: ``paper`` or ``live``. Both are read-only for this tool.
+        strikes_each_side: Number of strikes below and above spot, 1 through 10.
+        market_data_type: ``live`` or ``delayed``.
+    """
+    return get_spy_option_chain(
+        expiry=expiry,
+        account_mode=account_mode,
+        strikes_each_side=strikes_each_side,
+        market_data_type=market_data_type,
+    )
+
+
+@mcp.tool(annotations=ToolAnnotations(title="IBKR SPY Paper Order Preview", readOnlyHint=True, destructiveHint=False, openWorldHint=False))
+def ibkr_spy_option_order_preview(
+    expiry: str,
+    right: str,
+    strike: float,
+    limit_price: float,
+    quantity: int = 1,
+    action: str = "BUY",
+    account_mode: str = "paper",
+) -> dict:
+    """Build a deterministic, non-transmittable SPY option order proposal.
+
+    The first policy lane permits one long SPY call or put using a limit order
+    in Paper mode. The output is content-addressed for auditability but has no
+    broker authority. Live mode fails closed, and this tool never connects to
+    IBKR or submits an order.
+    """
+    return build_spy_option_order_intent(
+        expiry=expiry,
+        right=right,
+        strike=strike,
+        limit_price=limit_price,
+        quantity=quantity,
+        action=action,
+        account_mode=account_mode,
+    )
 
 
 # ── Futures tools ─────────────────────────────────────────────────────────────

@@ -7,7 +7,7 @@ requires-python = ">=3.10,<3.14"
 authors = [
   { name = "Atila Ahmettaner" }
 ]
-urls = { Repository = "https://github.com/atilaahmettaner/tradingview-mcp" }
+urls = { Repository = "https://github.com/tgv-trading/tradingview-mcp", Upstream = "https://github.com/atilaahmettaner/tradingview-mcp" }
 keywords = ["mcp", "tradingview", "crypto", "technical analysis", "screener", "backtesting", "walk-forward", "sentiment", "yahoo-finance", "trading", "agents", "algorithmic-trading", "equity-curve"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -39,6 +39,9 @@ dependencies = [
   "tradingview-screener==3.0.0",
   "tradingview-ta>=3.3.0",
 ]
+
+[project.optional-dependencies]
+ibkr = ["ib_async>=2.1,<3"]
 
 [project.scripts]
 # Entry point now points to packaged module
