@@ -61,6 +61,13 @@ If you want an AI clicking around *your* TradingView Desktop — editing Pine Sc
 > [!IMPORTANT]
 > **Not financial advice.** Nothing produced by this software is investment, financial, legal, tax, or accounting advice. tradingview-mcp is an informational and educational analysis tool. Its outputs, including indicators, scores, signals, "trade setups", entries, stop losses, and targets, are computed from third party market data and are **not** recommendations to buy, sell, or hold any asset. It does not execute trades, manage money, or guarantee any result. Trading and investing carry a substantial risk of loss, and you can lose some or all of your capital. Always do your own research and consult a licensed professional before making any financial decision. You are solely responsible for your own decisions and for complying with the laws and regulations that apply to you. Market data may be delayed, inaccurate, or incomplete, and is provided without warranty.
 
+> [!NOTE]
+> **Terminal Gravity fork:** `tgv-trading/tradingview-mcp` adds an optional,
+> read-only IBKR SPY options-data lane plus deterministic Paper order previews.
+> It does not submit orders. Live order authority is disabled. See
+> [the IBKR roadmap](docs/tgv-ibkr-roadmap.md) for the frozen contract and phased
+> execution boundary.
+
 > [!TIP]
 > **Prefer zero setup? Use the hosted version.** [**pro.cryptosieve.com**](https://pro.cryptosieve.com) serves all 37 tools as one connector URL for Claude.ai, ChatGPT, Copilot, and Cursor — no `uv`, `pandas`, or Python to wrangle. **From $9/mo (Pro) or $29/mo (Pro+ — higher limits), with a 3-day free trial.** Self-hosting stays free forever; hosted is just for folks who'd rather skip the ops. *(Full self-host vs hosted comparison in Quick Start below.)*
 
@@ -145,6 +152,19 @@ https://github-production-user-asset-6210df.s3.amazonaws.com/67838093/478689497-
 ```bash
 pip install tradingview-mcp-server
 ```
+
+For the Terminal Gravity IBKR tools, install the optional dependency:
+
+```bash
+git clone https://github.com/tgv-trading/tradingview-mcp.git
+cd tradingview-mcp
+pip install '.[ibkr]'
+```
+
+The IBKR tools connect to an already-running TWS or IB Gateway. Paper and Live
+use separate endpoints, client IDs, and exact configured account IDs. The chain
+tool opens a market-data-only socket and skips startup position/order/account
+synchronization; the order-preview tool is pure and never connects to IBKR.
 
 ### Optional: news & sentiment (free Marketaux key)
 
